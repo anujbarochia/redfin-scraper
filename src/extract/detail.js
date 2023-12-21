@@ -15,62 +15,72 @@ module.exports = async ({
             soldPrice = document.querySelector('.ListingStatusBannerSection')?.textContent.split('FOR')[1].trim()
         }
 
-        // Buyer’s Agent
-        const buyersAgent = {
-            // agent license number
-            agentLicenseNumber: document.querySelector('.buyer-agent-item .agent-basic-details--license')?.textContent.trim(),
-            // agent name
-            agentName: document.querySelector('.buyer-agent-item .agent-basic-details--heading')?.textContent.trim(),
-            // agent phone number
-            agentPhoneNo: undefined,
-            // agent email
-            agentEmail: undefined,
-            // agent address
-            agentAdress: undefined,
-            // brokerage name
-            brokerageName: document.querySelector('.buyer-agent-item .agent-basic-details--broker')?.textContent.trim(),
-            // brokerage email
-            brokerageEmail: undefined,
-            // brokerage phone number
-            brokeragePhoneNumber: undefined,
-        }
+        // getting element for the agents
+        const agentInfoContentElements = document.querySelectorAll('.agent-info-content');
+        const agentElements = [];
+        agentInfoContentElements.forEach(agentInfoContent => {
+            const listingAgentItems = agentInfoContent.querySelectorAll('.buyer-agent-item, .listing-agent-item');
+            agentElements.push(...Array.from(listingAgentItems));
+        });
 
-        //  Seller’s Agent
-        const sellersAgent = {
-            // agent license number
-            agentLicenseNumber: document.querySelector('.AgentInfoCard .agent-basic-details--license')?.textContent.trim(),
-            // agent name
-            agentName: document.querySelector('.AgentInfoCard .agent-basic-details--heading')?.textContent.trim(),
-            // agent phone number
-            agentPhoneNo: undefined,
-            // agent email
-            agentEmail: undefined,
-            // agent address
-            agentAdress: undefined,
-            // brokerage name
-            brokerageName: document.querySelector('.AgentInfoCard .agent-basic-details--broker')?.textContent.trim(),
-            // brokerage email
-            brokerageEmail: undefined,
-            // brokerage phone number
-            brokeragePhoneNumber: undefined,
-        }
+        // agentsArray contains all the details about the buying/selling agent displayed by the website
+        const agentsArray = [];
 
+        agentElements.forEach(item => {
+            const headingElement = item.querySelector('.agent-basic-details--heading');
+
+            let href = '';
+            let agentSlug = ''
+            if (headingElement.querySelector('a')?.getAttribute('href') ?? "") {
+                href = window.location.origin + headingElement.querySelector('a')?.getAttribute('href')
+                agentSlug = headingElement.querySelector('a')?.getAttribute('href').replace('/real-estate-agents/', '').trim()
+            }
+
+            const agentType = item.classList.contains('listing-agent-item') ? 'listing' : 'buyer';
+
+            const agentInfo = {
+                agentType: agentType,
+                agentProfileUrl: href,
+                agentSlug,
+                agentLicenseNumber: item.querySelector('.agent-basic-details--license')?.textContent?.replace('•', '').trim() ?? "",
+                agentName: headingElement?.textContent?.replace('Bought with', '').replace('Listed by', '').trim() ?? "",
+                agentAdress: "",
+                brokerName: item.querySelector('.agent-basic-details--broker')?.textContent?.replace('•', '').trim() ?? "",
+            };
+
+            if (item.querySelector('.agent-extra-info--email')?.textContent?.includes('broker')) {
+                agentInfo['brokerEmail'] = item.querySelector('.agent-extra-info--email')?.textContent?.replace('(broker)', '')?.replace('•', '').trim() ?? ""
+                agentInfo['agentEmail'] = ''
+            } else {
+                agentInfo['agentEmail'] = item.querySelector('.agent-extra-info--email')?.textContent?.replace('•', '').trim() ?? ""
+                agentInfo['brokerEmail'] = ''
+            }
+
+            if (item.querySelector('.agent-extra-info--phone')?.textContent?.includes('broker')) {
+                agentInfo['brokerPhoneNumber'] = item.querySelector('.agent-extra-info--phone')?.textContent?.replace('(broker)', '')?.replace('•', '').trim() ?? "";
+                agentInfo['agentPhoneNo'] = ''
+            } else {
+                agentInfo['agentPhoneNo'] = item.querySelector('.agent-extra-info--phone')?.textContent?.replace('•', '').trim() ?? "";
+                agentInfo['brokerPhoneNumber'] = ''
+
+            }
+            agentsArray.push(agentInfo);
+        });
 
         // Date scraped
         const dateScrapedOn = new Date().toJSON().slice(0, 10);
 
         // Datetime redfin updated
-        const redfinLastChecked = document.querySelector('.data-quality')?.textContent.split('ago')[1].trim()
+        const redfinLastChecked = document.querySelector('.data-quality')?.textContent.split('ago')[1]?.replace('(', '').replace(')', '').trim() ?? ""
 
         // Redfin source
-        const redfinSource = document.querySelector('.ListingSource')?.textContent.replace('•Source:', '')
+        const redfinSource = document.querySelector('.ListingSource')?.textContent.replace('•Source:', '') ?? ""
 
         return {
             propertyAddress,
             saleDate,
             soldPrice,
-            buyersAgent,
-            sellersAgent,
+            agentsArray,
             dateScrapedOn,
             redfinLastChecked,
             redfinSource

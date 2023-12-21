@@ -35,13 +35,13 @@ Actor.main(async () => {
         Dataset.pushData(item);
     };
 
-    // const proxyConfiguration = await Actor.createProxyConfiguration(
-    //     input.proxy
-    // );
+    const proxyConfiguration = await Actor.createProxyConfiguration(
+        input.proxy
+    );
 
     const options = {
         maxConcurrency: 2,
-        // proxyConfiguration,
+        proxyConfiguration,
         requestQueue,
         requestList,
         maxRequestRetries: 10,
@@ -82,7 +82,8 @@ Actor.main(async () => {
                     return routes.handleDetail({
                         context,
                         pushData,
-                        store
+                        store,
+                        Actor
                     });
                 case "LIST":
                     return routes.handleList({
