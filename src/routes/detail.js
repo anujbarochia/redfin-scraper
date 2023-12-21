@@ -17,7 +17,10 @@ module.exports = async ({
     const details = await extractDetail({
         context
     });
-    console.log(details);
+    // for (const i of details.extractedDetails.agentsArray) {
+    //     console.log(i);
+    // }
+    // console.log(details);
 
     function mergeObjects(obj1, obj2) {
         Object.keys(obj2).forEach((key) => {
@@ -44,11 +47,15 @@ module.exports = async ({
                 agentDetails = await agentStore.getValue(obj.agentSlug)
                 console.log(`Data Already Present for agent ${obj.agentSlug}`);
             }
+            console.log(agentDetails);
+            console.log("---------------------------");
+            // details.extractedDetails.agentsArray[index] =
+            obj = mergeObjects(obj, agentDetails);
         }
-        obj = mergeObjects(obj, agentDetails);
-    }
 
-    console.log(details);
+    }
+    // console.log(agentStore.getAgent);
+    // console.log("---------------------", details);
     await pushData(details);
 
     // if (!(await store.getValue(request.userData.id))) {

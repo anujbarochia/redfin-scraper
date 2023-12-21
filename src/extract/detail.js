@@ -5,9 +5,17 @@ module.exports = async ({
         request,
         page
     } = context;
+    await page.waitForSelector('.ListingStatusBannerSection')
     const extractedDetails = await page.evaluate(() => {
         const propertyAddress = document.querySelector('.full-address')?.textContent
-        const saleDate = document.querySelector('.ListingStatusBannerSection')?.textContent.split('FOR')[0].split('ON')[1].trim()
+
+        let saleDate
+        if (document.querySelector('.ListingStatusBannerSection')?.textContent?.split('FOR')[0]?.split('ON')[1]) {
+            saleDate = document.querySelector('.ListingStatusBannerSection')?.textContent?.split('FOR')[0]?.split('ON')[1] ?? ""
+        } else {
+            saleDate = ""
+        }
+
         let soldPrice;
         if (document.querySelector('[data-rf-test-id="abp-price"] span')?.textContent == 'Sold Price') {
             soldPrice = document.querySelector('[data-rf-test-id="abp-price"] div').textContent
@@ -36,10 +44,10 @@ module.exports = async ({
                 agentSlug = headingElement.querySelector('a')?.getAttribute('href').replace('/real-estate-agents/', '').trim()
             }
 
-            const agentType = item.classList.contains('listing-agent-item') ? 'listing' : 'buyer';
+            const agentType = item.classList.contains('listing-agent-item') ? 'seller' : 'buyer';
 
             const agentInfo = {
-                agentType: agentType,
+                agentType,
                 agentProfileUrl: href,
                 agentSlug,
                 agentLicenseNumber: item.querySelector('.agent-basic-details--license')?.textContent?.replace('•', '').trim() ?? "",

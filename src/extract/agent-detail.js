@@ -5,9 +5,12 @@ module.exports = async (
         request,
         page
     } = context;
-    await page.goto(url)
-    return await page.evaluate((agentSlug) => {
-        const mainObj = __reactServerState.InitialContext['ReactServerAgent.cache'].dataCache
+    console.log(url, agentSlug);
+    await page.goto(url, {
+        timeout: 1000 * 60 * 5
+    });
+    const agentDetail = await page.evaluate((agentSlug) => {
+        const mainObj = window.__reactServerState.InitialContext['ReactServerAgent.cache'].dataCache
         const subObj1 = mainObj[`/stingray/agents/data/agent-profile/${agentSlug}/url/get`].res.body.payload
         const subObj2 = mainObj[`/stingray/agents/data/${agentSlug}/agent-stats/get`].res.body.payload
         const subObj3 = mainObj[`/stingray/agents/data/agent-profile/${agentSlug}/rollup/get`].res.body.payload
@@ -50,5 +53,8 @@ module.exports = async (
             highestDealPrice,
             topCities
         }
-    }, agentSlug)
+    }, agentSlug);
+    console.log("inside agent detail");
+    console.log(agentDetail);
+    return agentDetail
 }

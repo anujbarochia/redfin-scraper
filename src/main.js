@@ -40,7 +40,7 @@ Actor.main(async () => {
     );
 
     const options = {
-        maxConcurrency: 2,
+        maxConcurrency: 1,
         proxyConfiguration,
         requestQueue,
         requestList,
@@ -62,10 +62,12 @@ Actor.main(async () => {
                 request
             }, gotoOptions) => {
                 if (request.label != "DETAIL") {
-                    gotoOptions.waitUntil = "networkidle2";
+                    // gotoOptions.waitUntil = "networkidle2";
                     gotoOptions.waitUntil = "domcontentloaded";
                 } else {
                     gotoOptions.waitUntil = "networkidle2";
+                    gotoOptions.waitUntil = "domcontentloaded";
+
                 }
             },
         ],
