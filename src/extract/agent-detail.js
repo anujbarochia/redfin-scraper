@@ -7,8 +7,10 @@ module.exports = async (
     } = context;
     console.log(url, agentSlug);
     await page.goto(url, {
-        timeout: 1000 * 60 * 5
+        timeout: 1000 * 30,
+        waitUntil: 'networkidle0'
     });
+    await page.waitForSelector('[data-rf-test-name="agent-name"]')
     const agentDetail = await page.evaluate((agentSlug) => {
         const mainObj = window.__reactServerState.InitialContext['ReactServerAgent.cache'].dataCache
         const subObj1 = mainObj[`/stingray/agents/data/agent-profile/${agentSlug}/url/get`].res.body.payload
@@ -55,6 +57,6 @@ module.exports = async (
         }
     }, agentSlug);
     console.log("inside agent detail");
-    console.log(agentDetail);
+    // console.log(agentDetail);
     return agentDetail
 }

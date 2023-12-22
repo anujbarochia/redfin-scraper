@@ -17,6 +17,7 @@ module.exports = async ({
     const details = await extractDetail({
         context
     });
+    page.isAgentPage = true;
     // for (const i of details.extractedDetails.agentsArray) {
     //     console.log(i);
     // }
@@ -37,10 +38,10 @@ module.exports = async ({
     }
 
     let agentDetails
-    for (const obj of details.extractedDetails.agentsArray) {
+    for (const [index, obj] of details.extractedDetails.agentsArray.entries()) {
         if (obj.agentProfileUrl) {
             if (!(await agentStore.getValue(obj.agentSlug))) {
-                console.log(`Getting Data for agent ${obj.agentSlug}`);
+                console.log(`Getting Data for agent: ${obj.agentSlug}`);
                 agentDetails = await extractAgentDetails(context, obj.agentProfileUrl, obj.agentSlug)
                 await agentStore.setValue(obj.agentSlug, agentDetails);
             } else {
@@ -49,8 +50,9 @@ module.exports = async ({
             }
             console.log(agentDetails);
             console.log("---------------------------");
-            // details.extractedDetails.agentsArray[index] =
-            obj = mergeObjects(obj, agentDetails);
+            finalObj = mergeObjects(obj, agentDetails);
+            details.extractedDetails.agentsArray[index] = finalObj
+
         }
 
     }

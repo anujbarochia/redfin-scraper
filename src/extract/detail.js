@@ -5,7 +5,9 @@ module.exports = async ({
         request,
         page
     } = context;
-    await page.waitForSelector('.ListingStatusBannerSection')
+    await page.waitForSelector('.ListingStatusBannerSection', {
+        timeout: 1000 * 30
+    });
     const extractedDetails = await page.evaluate(() => {
         const propertyAddress = document.querySelector('.full-address')?.textContent
 
@@ -20,7 +22,7 @@ module.exports = async ({
         if (document.querySelector('[data-rf-test-id="abp-price"] span')?.textContent == 'Sold Price') {
             soldPrice = document.querySelector('[data-rf-test-id="abp-price"] div').textContent
         } else {
-            soldPrice = document.querySelector('.ListingStatusBannerSection')?.textContent.split('FOR')[1].trim()
+            soldPrice = document.querySelector('.ListingStatusBannerSection')?.textContent.split('FOR')[1]?.trim()
         }
 
         // getting element for the agents
@@ -41,7 +43,7 @@ module.exports = async ({
             let agentSlug = ''
             if (headingElement.querySelector('a')?.getAttribute('href') ?? "") {
                 href = window.location.origin + headingElement.querySelector('a')?.getAttribute('href')
-                agentSlug = headingElement.querySelector('a')?.getAttribute('href').replace('/real-estate-agents/', '').trim()
+                agentSlug = headingElement.querySelector('a')?.getAttribute('href').replace('/real-estate-agents/', '')?.trim()
             }
 
             const agentType = item.classList.contains('listing-agent-item') ? 'seller' : 'buyer';
@@ -50,25 +52,25 @@ module.exports = async ({
                 agentType,
                 agentProfileUrl: href,
                 agentSlug,
-                agentLicenseNumber: item.querySelector('.agent-basic-details--license')?.textContent?.replace('•', '').trim() ?? "",
-                agentName: headingElement?.textContent?.replace('Bought with', '').replace('Listed by', '').trim() ?? "",
+                agentLicenseNumber: item.querySelector('.agent-basic-details--license')?.textContent?.replace('•', '')?.trim() ?? "",
+                agentName: headingElement?.textContent?.replace('Bought with', '').replace('Listed by', '')?.trim() ?? "",
                 agentAdress: "",
-                brokerName: item.querySelector('.agent-basic-details--broker')?.textContent?.replace('•', '').trim() ?? "",
+                brokerName: item.querySelector('.agent-basic-details--broker')?.textContent?.replace('•', '')?.trim() ?? "",
             };
 
             if (item.querySelector('.agent-extra-info--email')?.textContent?.includes('broker')) {
-                agentInfo['brokerEmail'] = item.querySelector('.agent-extra-info--email')?.textContent?.replace('(broker)', '')?.replace('•', '').trim() ?? ""
+                agentInfo['brokerEmail'] = item.querySelector('.agent-extra-info--email')?.textContent?.replace('(broker)', '')?.replace('•', '')?.trim() ?? ""
                 agentInfo['agentEmail'] = ''
             } else {
-                agentInfo['agentEmail'] = item.querySelector('.agent-extra-info--email')?.textContent?.replace('•', '').trim() ?? ""
+                agentInfo['agentEmail'] = item.querySelector('.agent-extra-info--email')?.textContent?.replace('•', '')?.trim() ?? ""
                 agentInfo['brokerEmail'] = ''
             }
 
             if (item.querySelector('.agent-extra-info--phone')?.textContent?.includes('broker')) {
-                agentInfo['brokerPhoneNumber'] = item.querySelector('.agent-extra-info--phone')?.textContent?.replace('(broker)', '')?.replace('•', '').trim() ?? "";
+                agentInfo['brokerPhoneNumber'] = item.querySelector('.agent-extra-info--phone')?.textContent?.replace('(broker)', '')?.replace('•', '')?.trim() ?? "";
                 agentInfo['agentPhoneNo'] = ''
             } else {
-                agentInfo['agentPhoneNo'] = item.querySelector('.agent-extra-info--phone')?.textContent?.replace('•', '').trim() ?? "";
+                agentInfo['agentPhoneNo'] = item.querySelector('.agent-extra-info--phone')?.textContent?.replace('•', '')?.trim() ?? "";
                 agentInfo['brokerPhoneNumber'] = ''
 
             }
@@ -79,7 +81,7 @@ module.exports = async ({
         const dateScrapedOn = new Date().toJSON().slice(0, 10);
 
         // Datetime redfin updated
-        const redfinLastChecked = document.querySelector('.data-quality')?.textContent.split('ago')[1]?.replace('(', '').replace(')', '').trim() ?? ""
+        const redfinLastChecked = document.querySelector('.data-quality')?.textContent.split('ago')[1]?.replace('(', '').replace(')', '')?.trim() ?? ""
 
         // Redfin source
         const redfinSource = document.querySelector('.ListingSource')?.textContent.replace('•Source:', '') ?? ""

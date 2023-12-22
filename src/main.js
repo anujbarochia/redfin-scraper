@@ -44,6 +44,7 @@ Actor.main(async () => {
         proxyConfiguration,
         requestQueue,
         requestList,
+        requestHandlerTimeoutSecs: 60,
         maxRequestRetries: 10,
         useSessionPool: true,
         launchContext: {
@@ -61,14 +62,17 @@ Actor.main(async () => {
                 page,
                 request
             }, gotoOptions) => {
-                if (request.label != "DETAIL") {
-                    // gotoOptions.waitUntil = "networkidle2";
-                    gotoOptions.waitUntil = "domcontentloaded";
-                } else {
-                    gotoOptions.waitUntil = "networkidle2";
-                    gotoOptions.waitUntil = "domcontentloaded";
-
-                }
+                gotoOptions.waitUntil = "domcontentloaded";
+                await page.setRequestInterception(true);
+                page.on("request", (request) => {
+                    if (request.resourceType() === "image" || request.resourceType() === "stylesheet" || request.resourceType() === "font") {
+                        request.abort();
+                    } else if (page.isAgentPage && !request.url().includes('redfin.com') && request.resourceType() === "script") {
+                        request.abort();
+                    } else {
+                        request.continue();
+                    }
+                });
             },
         ],
         requestHandler: async (context) => {
