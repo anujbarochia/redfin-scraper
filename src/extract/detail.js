@@ -71,9 +71,9 @@ module.exports = async ({
             }
 
             if (item.querySelector('.agent-extra-info--phone')?.textContent?.includes('broker')) {
-                agentInfo['brokerPhoneNumber'] = item.querySelector('.agent-extra-info--phone')?.textContent?.replace('(broker)', '')?.replace('•', '')?.trim() ?? "";
+                agentInfo['brokerPhoneNo'] = item.querySelector('.agent-extra-info--phone')?.textContent?.replace('(broker)', '')?.replace('•', '')?.trim() ?? "";
             } else {
-                agentInfo['brokerPhoneNumber'] = ''
+                agentInfo['brokerPhoneNo'] = ''
             }
 
             if (item.querySelector('.agent-extra-info--phone')?.textContent?.includes('agent')) {
