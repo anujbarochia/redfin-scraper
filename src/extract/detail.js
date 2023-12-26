@@ -60,20 +60,28 @@ module.exports = async ({
 
             if (item.querySelector('.agent-extra-info--email')?.textContent?.includes('broker')) {
                 agentInfo['brokerEmail'] = item.querySelector('.agent-extra-info--email')?.textContent?.replace('(broker)', '')?.replace('•', '')?.trim() ?? ""
-                agentInfo['agentEmail'] = ''
             } else {
-                agentInfo['agentEmail'] = item.querySelector('.agent-extra-info--email')?.textContent?.replace('•', '')?.trim() ?? ""
                 agentInfo['brokerEmail'] = ''
+            }
+
+            if (item.querySelector('.agent-extra-info--email')?.textContent?.includes('agent')) {
+                agentInfo['agentEmail'] = item.querySelector('.agent-extra-info--email')?.textContent?.replace('(agent)', '')?.replace('•', '')?.trim() ?? ""
+            } else {
+                agentElements['agentEmail'] = ''
             }
 
             if (item.querySelector('.agent-extra-info--phone')?.textContent?.includes('broker')) {
                 agentInfo['brokerPhoneNumber'] = item.querySelector('.agent-extra-info--phone')?.textContent?.replace('(broker)', '')?.replace('•', '')?.trim() ?? "";
-                agentInfo['agentPhoneNo'] = ''
             } else {
-                agentInfo['agentPhoneNo'] = item.querySelector('.agent-extra-info--phone')?.textContent?.replace('•', '')?.trim() ?? "";
                 agentInfo['brokerPhoneNumber'] = ''
-
             }
+
+            if (item.querySelector('.agent-extra-info--phone')?.textContent?.includes('agent')) {
+                agentInfo['agentPhoneNo'] = item.querySelector('.agent-extra-info--phone')?.textContent?.replace('(agent)', '')?.replace('•', '')?.trim() ?? "";
+            } else {
+                agentInfo['agentPhoneNo'] = ''
+            }
+
             agentsArray.push(agentInfo);
         });
 
