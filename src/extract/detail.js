@@ -58,29 +58,25 @@ module.exports = async ({
                 brokerName: item.querySelector('.agent-basic-details--broker')?.textContent?.replace('•', '')?.trim() ?? "",
             };
 
-            if (item.querySelector('.agent-extra-info--email')?.textContent?.includes('broker')) {
-                agentInfo['brokerEmail'] = item.querySelector('.agent-extra-info--email')?.textContent?.replace('(broker)', '')?.replace('•', '')?.trim() ?? ""
-            } else {
-                agentInfo['brokerEmail'] = ''
-            }
+            item.querySelectorAll('.agent-extra-info--email').forEach((el) => {
+                let emailText = el.textContent.trim();
+                if (emailText.includes('agent')) {
+                    item['agentEmail'] = emailText.replace('(agent)', '')?.replace('•', '')?.trim() ?? ""
+                }
+                if (emailText.includes('broker')) {
+                    item['brokerEmail'] = emailText.replace('(broker)', '')?.replace('•', '')?.trim() ?? ""
+                }
+            });
 
-            if (item.querySelector('.agent-extra-info--email')?.textContent?.includes('agent')) {
-                agentInfo['agentEmail'] = item.querySelector('.agent-extra-info--email')?.textContent?.replace('(agent)', '')?.replace('•', '')?.trim() ?? ""
-            } else {
-                agentElements['agentEmail'] = ''
-            }
-
-            if (item.querySelector('.agent-extra-info--phone')?.textContent?.includes('broker')) {
-                agentInfo['brokerPhoneNo'] = item.querySelector('.agent-extra-info--phone')?.textContent?.replace('(broker)', '')?.replace('•', '')?.trim() ?? "";
-            } else {
-                agentInfo['brokerPhoneNo'] = ''
-            }
-
-            if (item.querySelector('.agent-extra-info--phone')?.textContent?.includes('agent')) {
-                agentInfo['agentPhoneNo'] = item.querySelector('.agent-extra-info--phone')?.textContent?.replace('(agent)', '')?.replace('•', '')?.trim() ?? "";
-            } else {
-                agentInfo['agentPhoneNo'] = ''
-            }
+            item.querySelectorAll('.agent-extra-info--phone').forEach((el) => {
+                let phoneText = el.textContent.trim();
+                if (emailText.includes('agent')) {
+                    item['agentPhoneNo'] = phoneText.replace('(agent)', '')?.replace('•', '')?.trim() ?? ""
+                }
+                if (emailText.includes('broker')) {
+                    item['brokerPhoneNo'] = phoneText.replace('(broker)', '')?.replace('•', '')?.trim() ?? ""
+                }
+            });
 
             agentsArray.push(agentInfo);
         });
